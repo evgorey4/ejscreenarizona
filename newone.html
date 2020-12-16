@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Arizona Environmental Justice Characteristics</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet" />
+<body>
+<style>
+      .map-overlay {
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        position: absolute;
+        width: 32%;
+        top: 0;
+        left: 0;
+        padding: 10px;
+      }
+
+      .map-overlay .map-overlay-inner {
+        background-color: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+       
+      .map-overlay h2 {
+        line-height: 24px;
+        display: block;
+        margin: 0 0 10px;
+      }
+       
+      .map-overlay .legend .bar {
+        height: 10px;
+        width: 100%;
+        background: linear-gradient(to right, #fca107, #7f3121);
+      }
+       
+      .map-overlay input {
+        background-color: transparent;
+        display: inline-block;
+        width: 100%;
+        position: relative;
+        margin: 0;
+        cursor: ew-resize;
+      }
+
+      .map-overlay .legend .bar {
+        height: 10px;
+        width: 100%;
+        background: linear-gradient(to right, #fca107, #7f3121);
+      }
+
+      .map-overlay-inner button {
+        display: inline-block;
+        width: 20%;
+        height: 25px;
+        border: none;
+        cursor: pointer;
+      }
+       
+      .map-overlay-inner button:focus {
+        outline: none;
+
+      }
+       
+      .map-overlay-inner button:hover {
+        box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.1);
+      }
+
+
+      #buttons {
+        width: 90%;
+        margin: 0% auto;
+        margin-left: 31%;
+      }
+
+
+      .button {
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        width: 10%;
+        height: 15px;
+        padding: 8px;
+        border-radius: 3px;
+        margin-top: 10px;
+        font-size: 11px;
+        text-align: center;
+        color: #fff;
+        background: #f8a07e;
+        font-family: sans-serif;
+        font-weight: bold;
+      }
+</style>
+</head>
+<body>
+
+    <style type="text/css">
+      body { margin: 0; padding: 0; }
+      #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+
+  <div id='map'></div>
+
+  <div class="map-overlay top">
+    <div class="map-overlay-inner">
+      <h2>Environmental Justice Characteristics: Arizona</h2>
+      <p align="justify" style="font-family:Helvetica; font-size:110%; ">This is an envi <a href="https://www.google.com/covid19/mobility/">Community Mobility Report</a> based on collected annonimized and aggregated mobility data from Google Maps users. Based on analyzing how people visits and length of stay at different places, Google reported the mobility change compared to a baseline in the last month. That report provides insights into what has changed in response to social distancing and other policies aimed at combating COVID-19. This visualization tries to geovisualize the most recent reports that describe movement trends over time by geography, across different categories of places such as retail and recreation, groceries and pharmacies, parks, transit stations, workplaces, and residential at county and state levels across the United States. Updated April 2. By <a href='https://sites.google.com/site/xiaojiangligis/'>Xiaojiang Li.</a></p>
+
+      <label><h3>Legend</h3></label>
+      <div id="swatches"></div>
+      <br>
+      <label><h2 id=variablename></h2></label>
+      <p id = 'explanation' style="font-family:Helvetica; font-size:120%;"></p>
+    </div>
+  </div>
+    
+  <ul id="buttons">
+    <li id="button-MINORPCT" class="button">% Minority</li>
+    <li id="button-grocery_an" class="button">% Low-Income</li>
+    <li id="button-parks" class="button">Cancer Risk</li>
+    <li id="button-transit_st" class="button">Proximity to NPL Sites</li>
+    <li id="button-workplaces" class="button">% Lead Paint Homes</li>
+    <li id="button-residentia" class="button">Respitatory Hazard Index</li>
+  </ul>
+</body>
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiZXZlbHluZ29yZXkiLCJhIjoiY2tjY2poa2MzMDU0MDJzbXh5ZWd1dXJ2dyJ9.Q2PB14CpGlv9qRGFDFr1qA';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/evelyngorey/ckinz67xt04wt18nmmhim5ry7',
+zoom: 5.5,
+center: [-111.650766, 34.483358]
+});
+ 
+var hoveredStateId = null;
+
+var zoomThreshold = 4;
+var clickedAttr;
+
+var varNameDict = {'MINORPCT': '% Minority', 'LOWINCPCT': '% Low-Income','D_CANCR_2': 'Cancer Risk Index', 'PNPL': 'Count of NPL Sites w/in 5km','D_RESP_2': 'Respitatory Hazard Index', 'D_LDPNT_2': 'Lead Paint Presence Index'};
+var varExplanationDict = {
+        'MINORPCT': 'Mobility trends for places like grocery markets, food warehouses, farmers markets, specialty food shops, drug stores, and pharmacies.', 
+        'LOWINCPCT': 'obility trends for places like national parks, public beaches, marinas, dog parks, plazas, and public gardens.',
+        'D_CANCR_2': 'Mobility trends for places of residence.', 
+        'PNPL': 'Mobility trends for places like restaurants, cafes, shopping centers, theme parks, museums, libraries, and movie theaters.',
+        'D_RESP_2': 'Mobility trends for places like public transport hubs such as subway, bus, and train stations.', 
+        'D_LDPNT_2': 'Mobility trends for places of work.'};
+
+map.on('load', function() {
+
+    document.getElementById('button-MINORPCT').style.background = '#f3e79b';
+    document.getElementById('button-MINORPCT').style.color = 'black';
+
+    document.getElementById('variablename').innerHTML = '% Minority';
+    document.getElementById('explanation').innerHTML = 'The percentage of minority (non-white) residents per census block.';
+
+      initLayer();
+      addlayer();
+    });
+
+function hideLayers(){
+      var fields = ['LOWINCPCT', 'D_CANCR_2', 'PNPL', 'D_LDPNT_2', 'D_RESP_2']
+      for (var i = 0; i < fields.length; i++) {
+        var field = fields[i];
+          map.setLayoutProperty(field, 'visibility', 'none');
+          map.setLayoutProperty(field, 'visibility', 'none');
+      }
+    }
+
+// initLayer 1 - MINORPCT
+function initLayer(){
+map.addSource('AZ_EJ_cbg_WGS', {
+type: 'vector',
+url: 'mapbox://evelyngorey.3nsy0hbe'
+});
+map.addLayer({
+'id': 'MINORPCT',
+'type': 'fill',
+'source': 'AZ_EJ_cbg_WGS',
+'layout': {
+// make layer visible by default
+'visibility': 'visible'
+},
+
+paint: {
+            'fill-color': {
+              property: 'MINORPCT',
+              stops: [
+                [0, "#5c53a5"], 
+                [0.25, "#f8a07e"],
+                [0.5, "#ce6693"],
+                [0.75, "#f3e79b"],
+              ]
+            },
+
+            'fill-opacity': [
+              'case',
+                ['boolean', ['feature-state', 'hover'],
+                 false
+                ],
+                0.1,
+                0.75
+              ]
+          },
+
+'source-layer': 'AZ_EJ_cbg_WGS'
+});
+};
+
+// add pop-up for MINORPCT;
+
+      map.on('click', 'AZ_EJ_cbg_WGS', function(e) {
+          var features = map.queryRenderedFeatures(e.point, {
+              layers: ['AZ_EJ_cbg_WGS']
+          });
+
+          var features = features[0];
+          var attributeName = varNameDict.MINORPCT;
+          var attrExplanation = varExplanationDict.MINORPCT;
+
+          if(map.getZoom()<zoomThreshold){
+            var popup = new mapboxgl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML('<p style="font-size:120%"><b>'+ features.properties.NAMELSAD+'</b></p>' +
+                    '<p>' + attributeName + ': '+ '<b>'+(features.properties.MINORPCT*100).toString().substring(0, 3) + '%</b></p>')
+                .addTo(map);
+          }
+      });
+
+      function explainVariable(clickedAttr){
+        if (clickedAttr == 'MINORPCT'){
+          document.getElementById('variablename').innerHTML = '% Minority';
+          document.getElementById('explanation').innerHTML = 'The percentage of minority (non-white) residents per census block group.';
+        } else if (clickedAttr == 'LOWINCPCT'){
+          document.getElementById('variablename').innerHTML = '% Low-Income';
+          document.getElementById('explanation').innerHTML = 'The percentage of low-income residents per census block group.';
+        } else if (clickedAttr == 'D_CANCR_2'){
+          document.getElementById('variablename').innerHTML = 'Cancer Risk Index';
+          document.getElementById('explanation').innerHTML = 'EPA Environmental Justice Index for Cancer Risk by census block group.';
+        } else if (clickedAttr == 'PNPL') {
+          document.getElementById('variablename').innerHTML = 'Proximity to NPL Sites';
+          document.getElementById('explanation').innerHTML = 'The count of National Priority List (NPL) sites within 5km of each census block group.';
+        } else if (clickedAttr == 'D_LDPNT_2') {
+          document.getElementById('variablename').innerHTML = '% Lead Paint Homes';
+          document.getElementById('explanation').innerHTML = 'Mobility trends for places like restaurants, cafes, shopping centers, theme parks, museums, libraries, and movie theaters.';
+        } else if (clickedAttr == 'D_RESP_2') {
+          document.getElementById('variablename').innerHTML = 'Respitatory Hazard Index';
+        }
+    }
+
+// enumerate ids of the layers
+var toggleableLayerIds = ['MINORPCT', 'D_CANCR_2'];
+ 
+// set up the corresponding toggle button for each layer
+for (var i = 0; i < toggleableLayerIds.length; i++) {
+var id = toggleableLayerIds[i];
+ 
+var link = document.createElement('a');
+link.href = '#';
+link.className = 'active';
+link.textContent = id;
+ 
+link.onclick = function (e) {
+var clickedLayer = this.textContent;
+e.preventDefault();
+e.stopPropagation();
+ 
+var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+ 
+// toggle layer visibility by changing the layout object's visibility property
+if (visibility === 'visible') {
+map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+this.className = '';
+} else {
+this.className = 'active';
+map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+}
+};
+ 
+var layers = document.getElementById('menu');
+layers.appendChild(link);
+}
+</script>
+ 
+</body>
+</html>

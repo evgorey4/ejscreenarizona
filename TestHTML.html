@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="no-js" lang>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=devide-width,initial-scale=1,maximum-scale=1,user-scalable=0">
+<title>Arizona Environmental Justice Characteristics Map
+</title>
+<meta name="description" content="This map shows the EPA Environmental Justice Characteristics for all census block groups in the state of Arizona."/>
+</head>
+<body id="body">
+  <div class="modal-container">
+    <div class="modal fade" id="about-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button id="modal-close" onclick="hideModal()">
+          </button>
+          <h2>About</h2>
+          <p>
+            "Click on any census block group to find its information."
+          </p>
+      </div>
+    </div>
+  </div>
+  <div class="app">
+    <div id="sidebar">
+      <div class="sidebar-header">
+      </div>
+      <button id="button-modal" onclick="showModal()" style="font-weight:500;">
+                About
+              </button>
+  </div>
+  <div class="sidebar-inner">
+    <div id="view-default">
+      <h1>Arizona EPA Environmental Justice Characteristics</h1>
+      <p>
+        I will add a more thorough description later.
+      </p>
+  </div>
+  <hr style="margin-top: 0;">
+  <div class="explore-basemap">
+    <h2>Explore the basemaps</h2>
+    <div id="layer-picker-demographics">
+      <label>
+        <input checked name="basemap" type="radio" onclick="MINORPCT">
+        "% Minority Population"
+      </label>
+      <label>
+        <input name="basemap" type="radio" onclick="D_PNPL_2">
+        "EJ Index for Proximity to National Priority List Sites"
+      </label>
+      <label>
+        <input name="basemap" type="radio" onclick="PTSDF">
+        "Proximity to Hazardous Waste Management Sites"
+      </label>
+      <label>
+        <input name="basemap" type="radio" onclick="LOWINCPCT">
+        "% Low-Income Population"
+      </label>
+      <label>
+        <input name="basemap" type="radio" onclick="LINGUISOPCT">
+        "% Linguistically Isolated Population"
+      </label>
+      <label>
+        <input name="basemap" type="radio" onclick="CANCER">
+        "Air Toxics Cancer Risk"
+      </label>
+      <label>
+        <input name="basemap" type="radio" onclick="D_PWDIS_2">
+        "EJ Index for Wastewater Discharge Indicator"
+      </label>
+      <label>
+        <input name="basemap" type="radio" onclick="D_LDPNT_2">
+        "EJ Index for Lead Paint Indicator"
+      </label>
+    </div>
+  </div>
+</div>
+<div id="map-container">
+  <div id="after" class="map mapboxgl-map">
+    <div class="mapboxgl-canary" style="visibility: hidden;"></div>
+    <div class="mapboxgl-canvas-container mapboxgl-interactive mapboxgl-touch-drag-pan mapboxgl-touch-zoom-rotate">
+      <canvas class="mapboxgl-canvas" tabindex="0" aria-label="Map" width="1402" height="1885" style="width: 561px; height: 754px;">
+      </canvas>
+    </div>
+    <div class="mapboxgl-control-container">
+      <div class="mapboxgl-ctrl-top-left"></div>
+      <div class="mapboxgl-ctrl-top-right"></div>
+      <div class="mapboxgl-ctrl-bottom-left">
+        <div class="mapboxgl-ctrl" style="display: block;">
+          <a class="mapboxgl-ctrl-logo" target="_blank" rel="noopenernofollow" href="https://www.mapbox.com/" aria-label="Mapbox logo"></a>
+        </div>
+      </div>
+      <div class="mapboxgl-ctrl-bottom-right">
+        <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
+          <button class="mapboxgl-ctrl-zoom-in" type="button" title="Zoom in" aria-label="Zoom in">
+            <span class="mapboxgl-ctrl-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="mapboxgl-ctrl mapboxgl-ctrl-attrib maboxgk-compact">
+          <div class="mapboxgl-ctrl-attrib-inner">Arizona Monochrome</div>
+        </div>
+      </div>
+    </div>
+    <div class="mapboxgl-popup mapboxgl-popup-anchor-top-right" style="max-width: 240px; transform: translate(-100%, 0px) translate(447px, 102px);">
+      <div class="mapboxgl-popup-tip"></div>
+      <div class="mapboxgl-popup-content">
+        <button class="mapboxgl-popup-close-button" type="button" aria-label="Close popup">x</button>
+        <h2>Block Group</h2>
+        <table>
+          <tbody>
+            <tr>
+              <th>MINORPCT</th>
+              <td>[MINORPCT]</td>
+            </tr>
+            <tr>
+              <th>D_PNPL_2</th>
+              <td>[D_PNPL]</td>
+            </tr>
+            <tr>
+              <th>PTSDF</th>
+              <td>[PTSDF]</td>
+            </tr>
+            <tr>
+              <th>LOWINCPCT</th>
+              <td>[LOWINCPCT]</td>
+            </tr>
+            <tr>
+              <th>LINGUISOPCT</th>
+              <td>[LINGUISOPCT]</td>
+            </tr>
+            <tr>
+              <th>CANCER</th>
+              <td>[CANCER]</td>
+            </tr>
+            <tr>
+              <th>D_PWDIS_2</th>
+              <td>[D_PWDIS_2]</td>
+            </tr>
+            <tr>
+              <th>D_LDPNT_2</th>
+              <td>D_LDPNT_2</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div id="before" class="map mapboxgl-map" style="clip: rect(0px, 999em, 754px, 558px);">
+      <div class="mapboxgl-canary" style="visibility: hidden;"></div>
+      <div class="mapbox-gl-canvas-container mapboxgl-interactive mapboxgl-touch-drag-pan mapboxgl-touch-zoom-rotate">
+        <canvas class="mapboxgl-canvas" tabindex="0" aria-label="Map" width="1402" height="1885" style="width: 561px; height: 754px;">
+        </canvas>
+      </div>
+      <div class="mapboxgl-control-container">
+        <div class="mapboxgl-ctrl-top-left"></div>
+        <div class="mapboxgl-ctrl-top-right"></div>
+        <div class="mapboxgl-ctrl-bottom-left">
+          <div class="mapboxgl-ctrl" style="display: block;">
+            <a class="mapboxgl-ctrl-logo mapboxgl-compact" target="_blank" rel="noopener nofollow" href="https://www.mapbox.com/" aria-label="Mapbox logo"></a>
+          </div>
+        </div>
+        <div class="mapbox-gl-ctrl-bottom-right">
+          <div class="mapboxgl-ctrl mapboxgl-ctrl-attrib mapboxgl-attrib-empty mapboxgl-compact">
+            <div class="mapboxgl-ctrl-attrib-inner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
+<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script>
+<script src="js/d3-dsv.js" type="text/javascript"></script>
+<script src="js/main.js" type="text/javascript"></script>
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    h2,
+    h3 {
+      margin: 10px;
+      font-size: 1.2em;
+    }
+    h3 {
+      font-size: 1em;
+    }
+    p {
+      font-size: 0.85em;
+      margin: 10px;
+      text-align: left;
+    }
+    .map-overlay {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.8);
+      margin-right: 20px;
+      font-family: Arial, sans-serif;
+      overflow: auto;
+      border-radius: 3px;
+    }
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+    #features {
+      top: 0;
+      height: 100px;
+      margin-top: 20px;
+      width: 250px;
+    }
+    #legend {
+      padding: 10px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      line-height: 18px;
+      height: 150px;
+      margin-bottom: 40px;
+      width: 100px;
+    }
+    .legend-key {
+      display: inline-block;
+      border-radius: 20%;
+      width: 10px;
+      height: 10px;
+      margin-right: 5px;
+    }
+</style>
+</head>
+<style>
+.mapboxgl-popup {
+max-width: 400px;
+font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+</style>
+  <div id="map"></div>
+  <div class="map-overlay" id="features">
+    <h2>Arizona Environmental Justice Characteristics Web Map</h2>
+    <div id="pd"><p>The index is</p></div>
+  </div>
+  <div class="map-overlay" id="legend"></div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZXZlbHluZ29yZXkiLCJhIjoiY2tjY2poa2MzMDU0MDJzbXh5ZWd1dXJ2dyJ9.Q2PB14CpGlv9qRGFDFr1qA';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/evelyngorey/ckie3hn8d15jk19qiwtwq15d2',
+      zoom: 5.5,
+      center: [-111.650766, 34.483358]
+    });
+    // When a click event occurs on a feature in the states layer, open a popup at the
+    // location of the click, with description HTML from its properties.
+    map.on('click', function (e) {
+      var states = map.queryRenderedFeatures(e.point, {
+        layers: ['az-ej-cbg-wgs']
+      });
+    new mapboxgl.Popup()
+    .setLngLat(e.lngLat)
+    .setHTML(states[0].properties.NAMELSAD)
+    .addTo(map);
+    });
+    // Change the cursor to a pointer when the mouse is over the states layer.
+    map.on('mouseenter', 'states-layer', function () {
+    map.getCanvas().style.cursor = 'pointer';
+    });
+ 
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'states-layer', function () {
+    map.getCanvas().style.cursor = '';
+});
+</script>
+</body>
+</html>
+
+
+
+
+    map.on('click', function (e) {
+      var states = map.queryRenderedFeatures(e.point, {
+        layers: ['az-ej-cbg-wgs']
+      });
+    new mapboxgl.Popup()
+    .setLngLat(e.lngLat)
+    .setHTML(states[0].properties.NAMELSAD)
+    .addTo(map);
+    });
